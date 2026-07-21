@@ -29,8 +29,8 @@ def generate_profile(df: pd.DataFrame) -> dict:
         profile["columns"] = df.shape[1]
 
         # 2. Missing Values & Duplicate Rows (Added () after methods)
-        profile["total_missing_value"] = int(df.isnull().sum().sum())
-        profile["total_duplicated_rows"] = int(df.duplicated().sum())
+        profile["total_missing_values"] = int(df.isnull().sum().sum())
+        profile["total_duplicate_rows"] = int(df.duplicated().sum())
 
         # 3. Numerical Summary
         numerical_cols = df.select_dtypes(include="number").columns
