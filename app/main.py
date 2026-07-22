@@ -2,6 +2,7 @@ import streamlit as st
 
 from services.validation_service import validate_file
 from services.profile_service import generate_profile
+from services.cleaning_service import analyze_cleaning
 
 
 st.set_page_config(
@@ -105,9 +106,30 @@ st.dataframe(
     use_container_width=True
 )
 
+cleaning = analyze_cleaning(df)
+st.header(
 
-st.markdown("---")
+    "AI Cleaning Recommendations"
 
-st.info(
-    "🧹 Smart Data Cleaning Module Coming Soon..."
 )
+for column,data in cleaning["report"].items():
+    st.write(
+
+    f"### {column}"
+
+)
+    st.write(
+
+    f"Missing : {data['missing_values']}"
+
+)
+    st.write(
+
+    f"Percentage : {data['missing_percentage']}%"
+)
+    st.success(
+
+    f"Recommended : {data['recommended_method']}"
+
+)
+
