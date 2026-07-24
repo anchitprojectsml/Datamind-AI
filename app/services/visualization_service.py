@@ -22,11 +22,22 @@ def generate_visualizations(df: pd.DataFrame) -> dict:
             include="number"
         ).columns
 
+        
+
         if len(numeric_columns) == 0:
 
             return {
                 "success": False,
                 "message": "No numerical columns found."
+            }
+        categorical_columns = df.select_dtypes(include=["object", "string"]).columns
+
+
+        if len(categorical_columns) == 0:
+
+            return{
+                "success":False,
+                "message":  "No Categorical columns found. "
             }
 
         for column in numeric_columns:
@@ -61,6 +72,31 @@ def generate_visualizations(df: pd.DataFrame) -> dict:
 )
 
             ax.set_title(f"{column} Box Plot")
+
+            st.pyplot(fig)
+
+            plt.close(fig)
+
+        for column in categorical_columns:
+
+            st.subheader(f"📊 {column} - Bar Chart")
+
+            counts = df[column].value_counts()
+
+            fig, ax = plt.subplots(figsize=(8, 4))
+
+            ax.bar(
+            counts.index,
+            counts.values
+    )
+
+            ax.set_title(f"{column} Distribution")
+
+            ax.set_xlabel(column)
+
+            ax.set_ylabel("Count")
+
+            plt.xticks(rotation=45)
 
             st.pyplot(fig)
 
