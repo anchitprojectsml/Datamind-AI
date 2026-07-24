@@ -4,6 +4,7 @@ from services.validation_service import validate_file
 from services.profile_service import generate_profile
 from services.cleaning_service import analyze_cleaning
 from services.missing_value_service import handle_missing_values
+from services.visualization_service import generate_visualizations
 
 # --------------------------------------------------
 # Page Configuration
@@ -131,6 +132,15 @@ if st.session_state.df is not None:
             st.success(f"Recommended Method : {data['recommended_method']}")
 
         st.markdown("---")
+        st.markdown("---")
+
+        st.subheader("📊 Automatic Visualization Engine")
+
+        visual_result = generate_visualizations(df)
+
+        if not visual_result["success"]:
+            st.error(visual_result["message"])
+        
 
         # Sub-step 2: Interactive Cleaning Section
         missing_columns = list(cleaning["report"].keys())
@@ -190,3 +200,4 @@ if st.session_state.df is not None:
                 st.session_state.clean_success_msg = None
 
             st.success("🎉 Dataset has no missing values.")
+    
