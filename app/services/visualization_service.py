@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
+import seaborn as sns
 
 
 def generate_visualizations(df: pd.DataFrame) -> dict:
@@ -97,6 +98,30 @@ def generate_visualizations(df: pd.DataFrame) -> dict:
             ax.set_ylabel("Count")
 
             plt.xticks(rotation=45)
+
+            st.pyplot(fig)
+
+            plt.close(fig)
+
+        # ------------------------------------------
+# Correlation Heatmap
+# ------------------------------------------
+
+        if len(numeric_columns) >= 2:
+
+            st.subheader("🔥 Correlation Heatmap")
+
+            correlation_matrix = df[numeric_columns].corr()
+
+            fig, ax = plt.subplots(figsize=(8, 6))
+
+            sns.heatmap(
+            correlation_matrix,
+            annot=True,
+            cmap="coolwarm",
+            linewidths=0.5,
+            ax=ax
+    )
 
             st.pyplot(fig)
 

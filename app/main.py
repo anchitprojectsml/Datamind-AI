@@ -5,6 +5,9 @@ from services.profile_service import generate_profile
 from services.cleaning_service import analyze_cleaning
 from services.missing_value_service import handle_missing_values
 from services.visualization_service import generate_visualizations
+from services.insight_service import generate_insights
+from services.duplicate_service import handle_duplicates
+
 
 # --------------------------------------------------
 # Page Configuration
@@ -69,7 +72,7 @@ if st.session_state.df is not None:
     df = st.session_state.df
 
     # ==============================================
-    # Validation Report
+    # 1. Validation Report
     # ==============================================
     st.subheader("📋 Validation Report")
     st.write(st.session_state.validation_report)
@@ -77,7 +80,7 @@ if st.session_state.df is not None:
     st.markdown("---")
 
     # ==============================================
-    # Dataset Profile
+    # 2. Dataset Profile
     # ==============================================
     profile_result = generate_profile(df)
 
@@ -106,7 +109,7 @@ if st.session_state.df is not None:
     st.markdown("---")
 
     # ==============================================
-    # Dataset Preview
+    # 3. Dataset Preview
     # ==============================================
     st.subheader("👀 Dataset Preview")
     st.dataframe(
@@ -116,15 +119,59 @@ if st.session_state.df is not None:
 
     st.markdown("---")
 
+    st.markdown("---")
+
+    st.subheader("🗑 Duplicate Handling")
+
+    duplicates = df.duplicated().sum()
+
+    st.write(f"Duplicate Rows : {duplicates}")
+
+    if duplicates > 0:
+        method = st.selectbox(
+            "Duplicate Handling Method",
+            [
+                "Keep First",
+                "Drop All"
+            ]
+        )
+        if st.button("Remove Duplicates"):
+            result = handle_duplicates(
+            st.session_state.df,
+            method
+        )
+
+        if result["success"]:
+            st.session_state.df = result["dataFrame"]
+            st.success(result["message"])
+            st.rerun()
+
+        else:
+            st.error(result["message"])
+
+    else:
+
+        st.success("No duplicate rows found.")
+
+   
+
+
+
+
+
+
+
+
+
     # ==============================================
-    # Cleaning Recommendations & Interactive Action
+    # 4. Cleaning Recommendations & Action Section
     # ==============================================
     cleaning = analyze_cleaning(df)
 
     st.subheader("🧹 AI Cleaning Recommendations")
 
     if cleaning["success"]:
-        # Sub-step 1: Display analysis for each column
+        # Column level analysis show karein
         for column, data in cleaning["report"].items():
             st.write(f"### {column}")
             st.write(f"**Missing Values :** {data['missing_values']}")
@@ -132,25 +179,16 @@ if st.session_state.df is not None:
             st.success(f"Recommended Method : {data['recommended_method']}")
 
         st.markdown("---")
-        st.markdown("---")
 
-        st.subheader("📊 Automatic Visualization Engine")
-
-        visual_result = generate_visualizations(df)
-
-        if not visual_result["success"]:
-            st.error(visual_result["message"])
-        
-
-        # Sub-step 2: Interactive Cleaning Section
+        # Interactive Action Section
         missing_columns = list(cleaning["report"].keys())
 
         if len(missing_columns) > 0:
             
-            # --- YAHAN DEKHIYE: Target Location for Success Message ---
+            # Action Section ke upar Green Success Banner
             if st.session_state.clean_success_msg:
                 st.success(st.session_state.clean_success_msg)
-                st.session_state.clean_success_msg = None  # Ek baar display hone ke baad reset
+                st.session_state.clean_success_msg = None
 
             st.subheader("🛠️ Take Action & Clean Data")
 
@@ -185,19 +223,41 @@ if st.session_state.df is not None:
 
                 if clean_result["success"]:
                     st.session_state.df = clean_result["dataframe"]
-                    
-                    # Message tayyar karke session state me save kiya
                     st.session_state.clean_success_msg = f"✅ Success: Column **'{selected_column}'** has been successfully cleaned using **{method}**!"
-                    
                     st.toast(f"Column '{selected_column}' cleaned!", icon="✅")
                     st.rerun()
                 else:
                     st.error(clean_result["message"])
         else:
-            # Agar sare columns clean ho chuke hain tab bhi last success message yahan dikhega
             if st.session_state.clean_success_msg:
                 st.success(st.session_state.clean_success_msg)
                 st.session_state.clean_success_msg = None
 
             st.success("🎉 Dataset has no missing values.")
-    
+
+    st.markdown("---")
+
+    # ==============================================
+    # 5. Automatic Visualization Engine
+    # ==============================================
+    st.subheader("📊 Automatic Visualization Engine")
+
+    visual_result = generate_visualizations(df)
+
+    if not visual_result["success"]:
+        st.error(visual_result["message"])
+
+    st.markdown("---")
+
+    # ==============================================
+    # 6. AI Insights
+    # ==============================================
+    st.subheader("🧠 AI Insights")
+
+    insight_result = generate_insights(df)
+
+    if insight_result["success"]:
+        for insight in insight_result["insights"]:
+            st.info(insight)
+    else:
+        st.error(insight_result["message"])
