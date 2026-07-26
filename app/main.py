@@ -7,6 +7,7 @@ from services.missing_value_service import handle_missing_values
 from services.visualization_service import generate_visualizations
 from services.insight_service import generate_insights
 from services.duplicate_service import handle_duplicates
+from services.outlier_service import analyze_outliers
 
 
 # --------------------------------------------------
@@ -153,7 +154,31 @@ if st.session_state.df is not None:
 
         st.success("No duplicate rows found.")
 
-   
+
+    st.markdown("---")
+    st.subheader("📈 Outlier Detection")
+    outlier_result = analyze_outliers(st.session_state.df)
+
+    if outlier_result["success"]:
+        for column,info in outlier_result["report"].items():
+            st.write(f"###{column}")
+            st.write(f"Outliers:{info["outliers"]}")
+            st.write(f"Lower Bound:{info["lower_bound"]}")
+            st.write(f"Upper Bound :{info["upper_bound"]}")
+
+    if info["outliers"] > 0:
+
+        st.warning("⚠️ Outliers Detected")
+
+        st.info(
+        "AI Recommendation : Review these values before training your ML model."
+        )
+
+    else:
+
+        st.success("✅ No Outliers")
+
+
 
 
 
