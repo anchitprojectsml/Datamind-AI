@@ -8,6 +8,10 @@ from services.visualization_service import generate_visualizations
 from services.insight_service import generate_insights
 from services.duplicate_service import handle_duplicates
 from services.outlier_service import analyze_outliers
+from services.download_service import (
+    dataframe_to_csv,
+    dataframe_to_excel
+)
 
 
 # --------------------------------------------------
@@ -178,6 +182,51 @@ if st.session_state.df is not None:
 
         st.success("✅ No Outliers")
 
+    st.markdown("---")
+
+    st.subheader("📥 Download Clean Dataset")
+
+    csv_file = dataframe_to_csv(
+    st.session_state.df
+    )
+
+    excel_file = dataframe_to_excel(
+    st.session_state.df
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        st.download_button(
+
+        label="📄 Download CSV",
+
+        data=csv_file,
+
+        file_name="clean_dataset.csv",
+
+        mime="text/csv",
+
+        use_container_width=True
+
+        )
+
+    with col2:
+
+        st.download_button(
+
+        label="📊 Download Excel",
+
+        data=excel_file,
+
+        file_name="clean_dataset.xlsx",
+
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+        use_container_width=True
+
+        )
 
 
 
