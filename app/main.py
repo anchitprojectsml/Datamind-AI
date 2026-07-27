@@ -14,6 +14,10 @@ from services.download_service import (
 )
 from services.health_service import calculate_health_score
 from services.ai_summary_service import generate_ai_summary
+from services.pdf_report_service import generate_pdf_report
+
+
+
 
 
 # --------------------------------------------------
@@ -357,3 +361,21 @@ if summary_result["success"]:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True
         )
+
+    st.subheader("📄 Download Full AI PDF Report")
+
+    pdf_buffer = generate_pdf_report(
+            profile=profile,
+            health=health,
+            summary_result=summary_result,
+            dataset_name=uploaded_file.name
+        )
+
+    if pdf_buffer:
+            st.download_button(
+            label="📥 Download PDF Summary Report",
+            data=pdf_buffer,
+            file_name="DataMind_AI_Report.pdf",
+            mime="application/pdf",
+            use_container_width=True
+            )
