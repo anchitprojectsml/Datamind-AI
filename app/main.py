@@ -13,6 +13,7 @@ from services.download_service import (
     dataframe_to_excel
 )
 from services.health_service import calculate_health_score
+from services.ai_summary_service import generate_ai_summary
 
 
 # --------------------------------------------------
@@ -135,7 +136,31 @@ if st.session_state.df is not None:
                 health["grade"]
             )
 
-        st.markdown("---")
+            # ==============================================
+# ==============================================
+# AI Consultant Summary (CORRECTED CODE)
+# ==============================================
+summary_result = generate_ai_summary(df)
+
+if summary_result["success"]:
+    st.markdown("---")
+    st.subheader("🤖 AI Consultant Summary")
+
+    # 1. Key Findings Section
+    st.write("### Key Findings")
+    for item in summary_result["summary"]:
+        st.write(item)
+
+    st.markdown("---")
+
+    # 2. AI Recommendations Section (LOOP KE BAHAR)
+    st.write("### AI Recommendations")
+    
+    # enumerate() function index number (1, 2, 3...) dene ke liye use hua hai
+    for index, item in enumerate(summary_result["recommendations"], start=1):
+        st.info(f"{index}. {item}")
+
+    st.markdown("---")
 
     # ==============================================
     # 4. Dataset Preview
