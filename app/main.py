@@ -12,6 +12,7 @@ from services.download_service import (
     dataframe_to_csv,
     dataframe_to_excel
 )
+from services.health_service import calculate_health_score
 
 
 # --------------------------------------------------
@@ -114,7 +115,30 @@ if st.session_state.df is not None:
     st.markdown("---")
 
     # ==============================================
-    # 3. Dataset Preview
+    # 3. Dataset Health Score (Profile ke Just Baad)
+    # ==============================================
+    health = calculate_health_score(df)
+    if health["success"]:
+        st.subheader("🏥 Dataset Health Score")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "Health Score",
+                f"{health['score']}/100"
+            )
+
+        with col2:
+            st.metric(
+                "Grade",
+                health["grade"]
+            )
+
+        st.markdown("---")
+
+    # ==============================================
+    # 4. Dataset Preview
     # ==============================================
     st.subheader("👀 Dataset Preview")
     st.dataframe(
@@ -124,8 +148,9 @@ if st.session_state.df is not None:
 
     st.markdown("---")
 
-    st.markdown("---")
-
+    # ==============================================
+    # 5. Duplicate Handling
+    # ==============================================
     st.subheader("🗑 Duplicate Handling")
 
     duplicates = df.duplicated().sum()
@@ -142,110 +167,31 @@ if st.session_state.df is not None:
         )
         if st.button("Remove Duplicates"):
             result = handle_duplicates(
-            st.session_state.df,
-            method
-        )
+                st.session_state.df,
+                method
+            )
 
-        if result["success"]:
-            st.session_state.df = result["dataFrame"]
-            st.success(result["message"])
-            st.rerun()
+            if result["success"]:
+                st.session_state.df = result["dataFrame"]
+                st.success(result["message"])
+                st.rerun()
 
-        else:
-            st.error(result["message"])
+            else:
+                st.error(result["message"])
 
     else:
-
         st.success("No duplicate rows found.")
 
-
     st.markdown("---")
-    st.subheader("📈 Outlier Detection")
-    outlier_result = analyze_outliers(st.session_state.df)
-
-    if outlier_result["success"]:
-        for column,info in outlier_result["report"].items():
-            st.write(f"###{column}")
-            st.write(f"Outliers:{info["outliers"]}")
-            st.write(f"Lower Bound:{info["lower_bound"]}")
-            st.write(f"Upper Bound :{info["upper_bound"]}")
-
-    if info["outliers"] > 0:
-
-        st.warning("⚠️ Outliers Detected")
-
-        st.info(
-        "AI Recommendation : Review these values before training your ML model."
-        )
-
-    else:
-
-        st.success("✅ No Outliers")
-
-    st.markdown("---")
-
-    st.subheader("📥 Download Clean Dataset")
-
-    csv_file = dataframe_to_csv(
-    st.session_state.df
-    )
-
-    excel_file = dataframe_to_excel(
-    st.session_state.df
-    )
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        st.download_button(
-
-        label="📄 Download CSV",
-
-        data=csv_file,
-
-        file_name="clean_dataset.csv",
-
-        mime="text/csv",
-
-        use_container_width=True
-
-        )
-
-    with col2:
-
-        st.download_button(
-
-        label="📊 Download Excel",
-
-        data=excel_file,
-
-        file_name="clean_dataset.xlsx",
-
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-
-        use_container_width=True
-
-        )
-
-
-
-
-
-
-
-
-
 
     # ==============================================
-    # 4. Cleaning Recommendations & Action Section
+    # 6. AI Cleaning Recommendations & Action Section
     # ==============================================
     cleaning = analyze_cleaning(df)
 
     st.subheader("🧹 AI Cleaning Recommendations")
 
     if cleaning["success"]:
-        # Column level analysis show karein
         for column, data in cleaning["report"].items():
             st.write(f"### {column}")
             st.write(f"**Missing Values :** {data['missing_values']}")
@@ -254,12 +200,9 @@ if st.session_state.df is not None:
 
         st.markdown("---")
 
-        # Interactive Action Section
         missing_columns = list(cleaning["report"].keys())
 
         if len(missing_columns) > 0:
-            
-            # Action Section ke upar Green Success Banner
             if st.session_state.clean_success_msg:
                 st.success(st.session_state.clean_success_msg)
                 st.session_state.clean_success_msg = None
@@ -312,7 +255,31 @@ if st.session_state.df is not None:
     st.markdown("---")
 
     # ==============================================
-    # 5. Automatic Visualization Engine
+    # 7. Outlier Detection (Fixed Loop & Quotes Bug)
+    # ==============================================
+    st.subheader("📈 Outlier Detection")
+    outlier_result = analyze_outliers(st.session_state.df)
+
+    if outlier_result["success"]:
+        has_outliers = False
+        for column, info in outlier_result["report"].items():
+            st.write(f"### {column}")
+            st.write(f"Outliers: {info['outliers']}")
+            st.write(f"Lower Bound: {info['lower_bound']}")
+            st.write(f"Upper Bound: {info['upper_bound']}")
+            if info["outliers"] > 0:
+                has_outliers = True
+
+        if has_outliers:
+            st.warning("⚠️ Outliers Detected")
+            st.info("AI Recommendation : Review these values before training your ML model.")
+        else:
+            st.success("✅ No Outliers Found")
+
+    st.markdown("---")
+
+    # ==============================================
+    # 8. Automatic Visualization Engine
     # ==============================================
     st.subheader("📊 Automatic Visualization Engine")
 
@@ -324,7 +291,7 @@ if st.session_state.df is not None:
     st.markdown("---")
 
     # ==============================================
-    # 6. AI Insights
+    # 9. AI Insights
     # ==============================================
     st.subheader("🧠 AI Insights")
 
@@ -335,3 +302,33 @@ if st.session_state.df is not None:
             st.info(insight)
     else:
         st.error(insight_result["message"])
+
+    st.markdown("---")
+
+    # ==============================================
+    # 10. Download Clean Dataset (Aakhri mein Download Section)
+    # ==============================================
+    st.subheader("📥 Download Clean Dataset")
+
+    csv_file = dataframe_to_csv(st.session_state.df)
+    excel_file = dataframe_to_excel(st.session_state.df)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.download_button(
+            label="📄 Download CSV",
+            data=csv_file,
+            file_name="clean_dataset.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
+    with col2:
+        st.download_button(
+            label="📊 Download Excel",
+            data=excel_file,
+            file_name="clean_dataset.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True
+        )
