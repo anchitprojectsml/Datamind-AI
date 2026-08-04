@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="assets/banner.png" alt="DataMind AI Banner" width="100%">
+</p>
+
+
 # 📊 DataMind AI
 
 <p align="center">
