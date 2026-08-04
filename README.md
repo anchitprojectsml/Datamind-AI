@@ -133,7 +133,7 @@ Generates intelligent business insights including:
 
 ## 🏠 Home Dashboard
 
-![Home Dashboard](assets/screenshots/01_home_dashboard.png)
+![Home Dashboard](assets/screenshots/01_home.png)
 
 ---
 
