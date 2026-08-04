@@ -151,19 +151,19 @@ Generates intelligent business insights including:
 
 ## 🧹 Cleaning Recommendations
 
-![Cleaning Recommendations](assets/screenshots/04_cleaning_recommendations.png)
+![Cleaning Recommendations](assets/screenshots/05_ai_recommendations.png)
 
 ---
 
 ## 👀 Dataset Preview
 
-![Dataset Preview](assets/screenshots/05_dataset_preview.png)
+![Dataset Preview](assets/screenshots/05_Dataset_preview.png)
 
 ---
 
 ## 📊 Visualization Dashboard
 
-![Visualization Dashboard](assets/screenshots/06_visualizations.png)
+![Visualization Dashboard](assets/screenshots/10_heapmap.png)
 
 ---
 
