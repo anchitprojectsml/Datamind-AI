@@ -157,7 +157,7 @@ Generates intelligent business insights including:
 
 ## 👀 Dataset Preview
 
-![Dataset Preview](assets/screenshots/05_Dataset_preview.png)
+![Dataset Preview](assets/screenshots/06_Dataset_preview.png)
 
 ---
 
