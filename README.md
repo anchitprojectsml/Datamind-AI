@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="DataMind AI Banner" width="100%">
+  <img src="assets/screenshots/banner.png" alt="DataMind AI Banner" width="100%">
 </p>
 
 # 📊 DataMind AI
