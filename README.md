@@ -203,42 +203,22 @@ Generates intelligent business insights including:
 
 # 🏗️ Project Architecture
 
-```text
-                    📊 DataMind AI
+<p align="center">
+  <img src="https://raw.githubusercontent.com/anchitprojectsml/Datamind-AI/main/assets/architecture.png"
+       alt="DataMind AI Architecture"
+       width="100%">
+</p>
 
-                     User Uploads CSV
-                            │
-                            ▼
-                 File Validation Service
-                            │
-                            ▼
-                  Dataset Profiling Engine
-                            │
-                            ▼
-               Intelligent Cleaning Engine
-                            │
-                            ▼
-              Missing Value Recommendation
-                            │
-                            ▼
-                Duplicate Detection Engine
-                            │
-                            ▼
-                 Outlier Detection Engine
-                            │
-                            ▼
-              Automated Visualization Engine
-                            │
-                            ▼
-                Dataset Health Score Engine
-                            │
-                            ▼
-                 AI Consultant Summary
-                            │
-                            ▼
-          PDF Report + Clean Dataset Download
-```
+## Workflow
 
+1. User uploads a CSV dataset.
+2. Validation Service verifies file integrity.
+3. Profiling Service analyzes the dataset.
+4. Cleaning Services handle missing values, duplicates, and outliers.
+5. Visualization Service generates charts.
+6. Dataset Health Score evaluates data quality.
+7. AI Consultant generates insights.
+8. PDF Report and Clean Dataset are available for download.
 ---
 
 # 📂 Project Structure
